@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7d7df" />
+  <meta name="description" content="Dias Sem Brigas — um monitor bem-humorado da paz conjugal." />
+  <title>Dias Sem Brigas</title>
+  <link rel="icon" href="assets/heart-mark.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+  <div class="ambient ambient-c" aria-hidden="true"></div>
+
+  <section id="loginView" class="login-view">
+    <main class="login-card glass-card" aria-labelledby="loginTitle">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true">♡</div>
+        <div>
+          <p class="eyebrow">CENTRO NACIONAL DE MONITORAMENTO</p>
+          <h1 id="loginTitle">Dias Sem Brigas</h1>
+          <p class="login-subtitle">Diplomacia doméstica, carinho e estatística no mesmo lugar.</p>
+        </div>
+      </div>
+
+      <form id="loginForm" class="login-form" autocomplete="on">
+        <label class="field">
+          <span>Quem está entrando?</span>
+          <input id="loginName" name="username" list="knownUsers" autocomplete="username" placeholder="Ex.: Rodrigo" required />
+          <datalist id="knownUsers"></datalist>
+        </label>
+
+        <label class="field">
+          <span>Senha</span>
+          <div class="password-wrap">
+            <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Sua senha" required />
+            <button id="togglePassword" type="button" class="icon-button" aria-label="Mostrar ou ocultar senha">◉</button>
+          </div>
+        </label>
+
+        <button id="loginButton" class="primary-button wide" type="submit">
+          <span>Entrar no monitoramento</span>
+          <span aria-hidden="true">→</span>
+        </button>
+        <p id="loginFeedback" class="form-feedback" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="login-note">
+        <span aria-hidden="true">🔒</span>
+        <p>Somente os dois integrantes autorizados conseguem acessar e modificar os dados.</p>
+      </div>
+    </main>
+  </section>
+
+  <div id="appView" class="app-view hidden">
+    <header class="topbar">
+      <a href="#inicio" class="mini-brand" aria-label="Ir para o início">
+        <span class="mini-heart" aria-hidden="true">♡</span>
+        <span>Dias Sem Brigas</span>
+      </a>
+      <div class="topbar-actions">
+        <button id="notificationsButton" class="round-action" type="button" aria-label="Ver notificações">
+          <span aria-hidden="true">🔔</span>
+          <span id="notificationDot" class="notification-dot hidden"></span>
+        </button>
+        <button id="userMenuButton" class="user-pill" type="button">
+          <span id="userAvatar" class="user-avatar">R</span>
+          <span class="user-pill-text">
+            <strong id="userDisplayName">Rodrigo</strong>
+            <small id="userStatusText">no comando</small>
+          </span>
+          <span aria-hidden="true">⌄</span>
+        </button>
+      </div>
+    </header>
+
+    <div id="userMenu" class="user-menu hidden">
+      <button id="openSettingsButton" type="button" class="menu-item hidden">⚙️ Configurações</button>
+      <button id="logoutButton" type="button" class="menu-item danger">↪ Sair</button>
+    </div>
+
+    <main class="app-main">
+      <section id="inicio" class="hero-section">
+        <div id="heroCard" class="hero-card glass-card tier-training">
+          <div class="hero-topline">
+            <span id="liveStatusBadge" class="status-badge peace">● Tudo em paz</span>
+            <span id="lastUpdated" class="muted-small">Atualizando…</span>
+          </div>
+
+          <div class="hero-center">
+            <p id="heroIntro" class="hero-intro">Estamos há</p>
+            <div class="day-count-wrap">
+              <span id="currentDays" class="day-count">0</span>
+              <span class="day-label">dias</span>
+            </div>
+            <h2 id="heroHeadline">sem brigas</h2>
+            <div id="tierBadge" class="tier-badge">🥉 Casal em Treinamento</div>
+            <p id="dailyPhrase" class="daily-phrase">Carregando o boletim da paz…</p>
+          </div>
+
+          <div class="progress-card">
+            <div class="progress-header">
+              <div>
+                <span class="muted-small">Próxima conquista</span>
+                <strong id="nextMilestoneLabel">7 dias — Primeira Semana de Paz</strong>
+              </div>
+              <span id="nextMilestoneRemaining" class="progress-number">7</span>
+            </div>
+            <div class="progress-track" aria-hidden="true"><div id="milestoneProgress" class="progress-fill"></div></div>
+          </div>
+
+          <div class="hero-metrics">
+            <article class="mini-stat">
+              <span aria-hidden="true">🏆</span>
+              <div><small>Recorde</small><strong id="heroRecord">0 dias</strong></div>
+            </article>
+            <article class="mini-stat">
+              <span aria-hidden="true">💥</span>
+              <div><small>Última briga</small><strong id="heroLastConflict">Ainda não houve</strong></div>
+            </article>
+            <article class="mini-stat">
+              <span aria-hidden="true">💞</span>
+              <div><small>Última reconciliação</small><strong id="heroLastReconciliation">Ainda não houve</strong></div>
+            </article>
+            <article class="mini-stat">
+              <span aria-hidden="true">🎯</span>
+              <div><small>Para superar o recorde</small><strong id="heroRecordGap">Primeiro recorde em formação</strong></div>
+            </article>
+          </div>
+        </div>
+
+        <div id="conflictBanner" class="conflict-banner hidden" role="status">
+          <div class="conflict-icon" aria-hidden="true">☁</div>
+          <div class="conflict-copy">
+            <p class="eyebrow">ATENÇÃO DIPLOMÁTICA</p>
+            <h3 id="conflictBannerTitle">Conflito em andamento</h3>
+            <p id="conflictBannerReason">Há uma situação aguardando conversa.</p>
+            <div class="conflict-meta">
+              <span id="conflictStartedAt">—</span>
+              <span id="conflictCreatedBy">—</span>
+            </div>
+          </div>
+          <div id="conflictActions" class="conflict-actions"></div>
+        </div>
+      </section>
+
+      <section id="notificationPanel" class="notice-panel hidden">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">CENTRAL DE AVISOS</p>
+            <h2>Tem algo pedindo sua atenção</h2>
+          </div>
+          <button id="closeNotificationsButton" class="text-button" type="button">Fechar</button>
+        </div>
+        <div id="notificationList" class="notice-list"></div>
+      </section>
+
+      <section class="quick-actions-section">
+        <button id="registerConflictButton" class="action-card conflict-action" type="button">
+          <span class="action-icon">💥</span>
+          <span><strong>Registrar uma ocorrência</strong><small>Quando a diplomacia precisar de ata.</small></span>
+          <span class="action-arrow">→</span>
+        </button>
+        <button id="openHistoryButton" class="action-card" type="button">
+          <span class="action-icon">📚</span>
+          <span><strong>Histórico Diplomático</strong><small>Memória oficial das conversas sérias.</small></span>
+          <span class="action-arrow">→</span>
+        </button>
+      </section>
+
+      <section id="estatisticas" class="content-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">CENTRO DE MONITORAMENTO</p>
+            <h2>Estatísticas da paz conjugal</h2>
+          </div>
+          <p class="section-description">Indicadores rigorosamente sérios sobre um assunto que não precisa ser tão sério assim.</p>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card"><span>👀</span><small>Total de visitas</small><strong id="statVisits">0</strong></article>
+          <article class="stat-card"><span>❤️</span><small>Dias atuais sem brigas</small><strong id="statCurrentDays">0</strong></article>
+          <article class="stat-card"><span>🏆</span><small>Recorde</small><strong id="statRecord">0 dias</strong></article>
+          <article class="stat-card"><span>💥</span><small>Brigas registradas</small><strong id="statConflicts">0</strong></article>
+          <article class="stat-card"><span>🤝</span><small>Reconciliações</small><strong id="statReconciliations">0</strong></article>
+          <article class="stat-card"><span>📅</span><small>Tempo monitorado</small><strong id="statMonitoredDays">0 dias</strong></article>
+          <article class="stat-card"><span>⏱️</span><small>Última atualização</small><strong id="statLastUpdate">Agora</strong></article>
+          <article class="stat-card"><span>🕊️</span><small>Tempo em paz</small><strong id="statPeacePercent">100%</strong></article>
+          <article class="stat-card"><span>📈</span><small>Novos recordes</small><strong id="statRecordBreaks">0</strong></article>
+          <article class="stat-card"><span>🗓️</span><small>Última briga</small><strong id="statLastConflict">—</strong></article>
+        </div>
+
+        <div class="deep-stats-grid">
+          <article class="insight-card"><small>Média entre brigas</small><strong id="statAveragePeace">—</strong><p>Intervalo médio de paz antes de cada ocorrência.</p></article>
+          <article class="insight-card"><small>Duração média das brigas</small><strong id="statAverageConflict">—</strong><p>Do registro até a reconciliação confirmada.</p></article>
+          <article class="insight-card"><small>Briga mais longa</small><strong id="statLongestConflict">—</strong><p>O episódio que mais exigiu habilidade diplomática.</p></article>
+          <article class="insight-card"><small>Reconciliação mais rápida</small><strong id="statFastestConflict">—</strong><p>Quando o bom senso chegou antes do orgulho.</p></article>
+        </div>
+
+        <div class="ranking-card glass-card">
+          <div>
+            <p class="eyebrow">PÓDIO DA DIPLOMACIA</p>
+            <h3>Top 3 maiores períodos de paz</h3>
+          </div>
+          <div id="topRecords" class="podium-list"></div>
+        </div>
+      </section>
+
+      <section id="conquistas" class="content-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">GAMIFICAÇÃO CONJUGAL</p>
+            <h2>Conquistas desbloqueadas</h2>
+          </div>
+          <p id="achievementSummary" class="section-description">0 conquistas liberadas.</p>
+        </div>
+        <div id="achievementsGrid" class="achievements-grid"></div>
+      </section>
+
+      <section id="historico" class="content-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">MEMÓRIA OFICIAL</p>
+            <h2>Histórico Diplomático</h2>
+          </div>
+          <p class="section-description">Nenhuma ocorrência some: tudo fica registrado com autoria, horários e reconciliação.</p>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Feito para duas pessoas, muitas conversas e cada vez menos necessidade de abrir ocorrência.</p>
+    </footer>
+  </div>
+
+  <dialog id="conflictDialog" class="modal-dialog">
+    <form id="conflictForm" method="dialog" class="modal-card">
+      <div class="modal-header">
+        <div><p class="eyebrow">REGISTRO DIPLOMÁTICO</p><h2>Nova ocorrência</h2></div>
+        <button class="close-button" type="button" data-close-dialog="conflictDialog" aria-label="Fechar">×</button>
+      </div>
+      <p class="modal-lead">Registre o fato sem transformar o formulário em uma segunda discussão.</p>
+      <div class="two-columns">
+        <label class="field"><span>Data</span><input id="conflictDate" type="date" required /></label>
+        <label class="field"><span>Hora</span><input id="conflictTime" type="time" required /></label>
+      </div>
+      <label class="field"><span>Motivo ou descrição</span><textarea id="conflictReason" maxlength="500" rows="5" placeholder="Ex.: divergência estratégica sobre onde jantar…" required></textarea><small class="field-help">Máximo de 500 caracteres.</small></label>
+      <div class="modal-actions"><button class="secondary-button" type="button" data-close-dialog="conflictDialog">Cancelar</button><button id="saveConflictButton" class="danger-button" type="submit">Registrar ocorrência</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="editConflictDialog" class="modal-dialog">
+    <form id="editConflictForm" method="dialog" class="modal-card">
+      <div class="modal-header"><div><p class="eyebrow">RETIFICAÇÃO</p><h2>Editar ocorrência ativa</h2></div><button class="close-button" type="button" data-close-dialog="editConflictDialog">×</button></div>
+      <label class="field"><span>Motivo ou descrição</span><textarea id="editConflictReason" maxlength="500" rows="5" required></textarea></label>
+      <div class="modal-actions"><button class="secondary-button" type="button" data-close-dialog="editConflictDialog">Cancelar</button><button class="primary-button" type="submit">Salvar alteração</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDialog" class="modal-dialog wide-dialog">
+    <form id="settingsForm" method="dialog" class="modal-card">
+      <div class="modal-header"><div><p class="eyebrow">CONFIGURAÇÃO DO CASAL</p><h2>Ajustes administrativos</h2></div><button class="close-button" type="button" data-close-dialog="settingsDialog">×</button></div>
+      <div class="settings-block">
+        <h3>Monitoramento</h3>
+        <label class="field"><span>Nome do casal / título do painel</span><input id="coupleLabelInput" maxlength="80" placeholder="Rodrigo & Digníssima" /></label>
+        <label class="field"><span>Data de início do monitoramento</span><input id="monitorStartInput" type="datetime-local" /></label>
+      </div>
+      <div class="settings-block">
+        <h3>Segundo usuário</h3>
+        <p class="field-help">Primeiro crie a segunda conta em Firebase Authentication. Depois informe aqui o apelido de login, e-mail e UID dessa conta.</p>
+        <label class="field"><span>Nome de login</span><input id="partnerAliasInput" maxlength="40" placeholder="Digníssima" /></label>
+        <label class="field"><span>E-mail usado no Firebase Authentication</span><input id="partnerEmailInput" type="email" autocomplete="off" placeholder="email@exemplo.com" /></label>
+        <label class="field"><span>UID do Firebase</span><input id="partnerUidInput" autocomplete="off" placeholder="Cole o UID da segunda conta" /></label>
+      </div>
+      <div class="modal-actions"><button class="secondary-button" type="button" data-close-dialog="settingsDialog">Cancelar</button><button class="primary-button" type="submit">Salvar configurações</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="celebrationDialog" class="celebration-dialog">
+    <div class="celebration-card">
+      <button class="close-button celebration-close" type="button" data-close-dialog="celebrationDialog">×</button>
+      <div id="celebrationEmoji" class="celebration-emoji">🏆</div>
+      <p id="celebrationEyebrow" class="eyebrow">MARCO DESBLOQUEADO</p>
+      <h2 id="celebrationTitle">Parabéns!</h2>
+      <p id="celebrationMessage">A diplomacia segue rendendo frutos.</p>
+      <button class="primary-button" type="button" data-close-dialog="celebrationDialog">Continuar para o painel</button>
+    </div>
+  </dialog>
+
+  <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <div id="confettiLayer" class="confetti-layer" aria-hidden="true"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

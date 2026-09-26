@@ -1,0 +1,24 @@
+{
+  "name": "Dias Sem Brigas",
+  "short_name": "Paz Conjugal",
+  "description": "Monitor bem-humorado da paz conjugal.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff8fa",
+  "theme_color": "#f7d7df",
+  "icons": [
+    {
+      "src": "assets/heart-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/heart-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

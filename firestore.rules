@@ -1,0 +1,72 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isPrimaryAdmin() {
+      return signedIn()
+        && request.auth.uid == "Xj5jFnLQ5NfvB1HH9v59OvZHD072";
+    }
+
+    function isAuthorizedPartner() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/authorizedUsers/$(request.auth.uid))
+        && get(/databases/$(database)/documents/authorizedUsers/$(request.auth.uid)).data.active == true;
+    }
+
+    function isAuthorized() {
+      return isPrimaryAdmin() || isAuthorizedPartner();
+    }
+
+    // O login precisa descobrir o e-mail Firebase a partir do apelido simples.
+    // Este documento contém apenas apelido + e-mail; nunca contém senha.
+    match /public/authAliases {
+      allow read: if true;
+      allow create, update, delete: if isPrimaryAdmin();
+    }
+
+    // Lista fechada dos dois usuários autorizados.
+    match /authorizedUsers/{userId} {
+      allow read: if isPrimaryAdmin() || (signedIn() && request.auth.uid == userId);
+      allow create, update, delete: if isPrimaryAdmin();
+    }
+
+    // Configurações gerais são lidas pelos dois, mas alteradas só pelo administrador inicial.
+    match /settings/{documentId} {
+      allow read: if isAuthorized();
+      allow create, update, delete: if isPrimaryAdmin();
+    }
+
+    // Estado corrente do contador e estatísticas globais.
+    match /system/{documentId} {
+      allow read, create, update: if isAuthorized();
+      allow delete: if isPrimaryAdmin();
+    }
+
+    match /stats/{documentId} {
+      allow read, create, update: if isAuthorized();
+      allow delete: if isPrimaryAdmin();
+    }
+
+    // Ocorrências podem ser registradas e movimentadas pelos dois usuários.
+    match /conflicts/{conflictId} {
+      allow read, create, update: if isAuthorized();
+      allow delete: if isPrimaryAdmin();
+
+      // A trilha de auditoria é somente de acréscimo: eventos antigos não são editados nem apagados.
+      match /events/{eventId} {
+        allow read, create: if isAuthorized();
+        allow update, delete: if false;
+      }
+    }
+
+    // Tudo que não estiver previsto acima permanece bloqueado.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
