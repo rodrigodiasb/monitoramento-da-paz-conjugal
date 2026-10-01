@@ -330,3 +330,17 @@ Publique o arquivo `firestore.rules` desta versão antes de testar o recurso. A 
 ### Diagnóstico do Histórico de acesso — v2.1.1
 
 O bloco de acessos agora é independente do carregamento do restante do painel. Se a leitura da coleção `accessLogs` falhar, a interface deixa de ficar presa em “Carregando…” e mostra um aviso específico. As causas mais comuns são: regras antigas ainda publicadas no Firestore, arquivos JavaScript da versão anterior no GitHub Pages ou cache do navegador. Após atualizar os arquivos e as Rules, faça logout/login novamente para gerar um novo registro de acesso.
+
+
+## Expiração automática da sessão — v2.2.0
+
+Esta versão adiciona controle local de expiração da sessão autenticada, sem alterar o Firebase Authentication ou as regras do Firestore.
+
+- **30 minutos de inatividade:** se não houver interação com o aplicativo nesse período, o sistema encerra a sessão automaticamente.
+- **8 horas de sessão máxima:** mesmo com uso contínuo, a sessão é encerrada após 8 horas e exige novo login.
+- Cliques, toques, uso do teclado, rolagem e retorno à aba são considerados atividade.
+- O horário inicial e a última atividade são mantidos no navegador para que atualizar ou fechar/reabrir a página não reinicie artificialmente o prazo.
+- Ao expirar, o aplicativo volta à tela de login e informa se o motivo foi inatividade ou limite máximo de 8 horas.
+- Logout manual limpa imediatamente os dados locais de controle da sessão.
+
+Nenhuma mudança em `firestore.rules` é necessária para este recurso.

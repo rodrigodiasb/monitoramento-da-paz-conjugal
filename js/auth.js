@@ -6,6 +6,7 @@ import {
 import { auth } from "./firebase.js";
 import { getAuthorizedProfile, isAuthorizedUser, loadPublicAliases, registerAccessLogin } from "./data.js";
 import { normalizeAlias } from "./utils.js";
+import { clearSessionState, startFreshSession } from "./session.js";
 
 let aliasCache = null;
 
@@ -27,6 +28,7 @@ export async function loginWithAlias(alias, password) {
     throw new Error("Esta conta existe no Firebase, mas não está autorizada para este casal.");
   }
   const profile = await getAuthorizedProfile(credential.user);
+  startFreshSession(credential.user.uid);
   try {
     await registerAccessLogin({
       user: credential.user,
@@ -39,6 +41,7 @@ export async function loginWithAlias(alias, password) {
 }
 
 export async function logout() {
+  clearSessionState();
   await signOut(auth);
 }
 

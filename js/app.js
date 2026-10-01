@@ -15,6 +15,7 @@ import {
   updateCoupleSettings
 } from "./data.js";
 import { calculateStats } from "./stats.js";
+import { startSessionGuard, stopSessionGuard } from "./session.js";
 import { getLoginCelebration } from "./gamification.js";
 import { getReconciliationPhrase } from "./phrases.js";
 import {
@@ -47,7 +48,8 @@ const appState = {
   dashboardData: null,
   stats: null,
   unsubscribeDashboard: null,
-  timer: null
+  timer: null,
+  pendingLoginMessage: ""
 };
 
 async function init() {
@@ -78,6 +80,8 @@ function bindStaticEvents() {
   document.addEventListener("click", () => $("userMenu").classList.add("hidden"));
   $("logoutButton").addEventListener("click", async () => {
     $("userMenu").classList.add("hidden");
+    appState.pendingLoginMessage = "";
+    stopSessionGuard({ clear: true });
     await logout();
   });
 
@@ -135,7 +139,10 @@ async function handleSessionChange(user) {
   appState.stats = null;
 
   if (!user) {
-    showLogin();
+    stopSessionGuard();
+    const message = appState.pendingLoginMessage;
+    appState.pendingLoginMessage = "";
+    showLogin(message);
     return;
   }
 
@@ -148,6 +155,16 @@ async function handleSessionChange(user) {
 
     appState.user = user;
     appState.profile = profile;
+
+    startSessionGuard({
+      uid: user.uid,
+      onExpire: async ({ message }) => {
+        appState.pendingLoginMessage = message;
+        cleanupDashboardSubscription();
+        await logout();
+      }
+    });
+
     await ensureBootstrap(user);
     renderUser(profile, user.uid === PRIMARY_ADMIN.uid);
     showApp();
@@ -367,5 +384,8 @@ async function handleSettingsSubmit(event) {
   }
 }
 
-window.addEventListener("beforeunload", cleanupDashboardSubscription);
+window.addEventListener("beforeunload", () => {
+  cleanupDashboardSubscription();
+  stopSessionGuard();
+});
 init();
