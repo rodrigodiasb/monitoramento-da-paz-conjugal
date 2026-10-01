@@ -92,6 +92,7 @@ function bindStaticEvents() {
     openDialog("conflictDialog");
   });
   $("openHistoryButton").addEventListener("click", () => $("historico").scrollIntoView({ behavior: "smooth" }));
+  $("openAccessHistoryButton").addEventListener("click", () => $("acessos").scrollIntoView({ behavior: "smooth", block: "start" }));
   $("openSettingsButton").addEventListener("click", openSettings);
 
   $("conflictForm").addEventListener("submit", handleConflictSubmit);
@@ -181,7 +182,13 @@ function handleDashboardData(data) {
 function updateComputedDashboard(checkCelebration) {
   const stats = calculateStats({ ...appState.dashboardData, now: new Date() });
   appState.stats = stats;
-  renderDashboard({ stats, settings: appState.dashboardData.settings, profile: appState.profile });
+  renderDashboard({
+    stats,
+    settings: appState.dashboardData.settings,
+    profile: appState.profile,
+    accessLogs: appState.dashboardData.accessLogs ?? [],
+    accessLogsStatus: appState.dashboardData.accessLogsStatus ?? "loading"
+  });
   const label = appState.dashboardData.settings?.coupleLabel;
   document.title = label ? `${label} — Dias Sem Brigas` : "Dias Sem Brigas";
   if (checkCelebration) maybeCelebrate(stats);

@@ -122,7 +122,16 @@ export async function ensureBootstrap(user) {
 }
 
 export function subscribeDashboard(onData, onError) {
-  const state = { settings: null, system: null, globalStats: null, conflicts: null };
+  // O histórico de acesso é complementar ao painel. Uma falha exclusiva nessa
+  // consulta não deve impedir o restante do dashboard de carregar.
+  const state = {
+    settings: null,
+    system: null,
+    globalStats: null,
+    conflicts: null,
+    accessLogs: [],
+    accessLogsStatus: "loading"
+  };
   const loaded = { settings: false, system: false, globalStats: false, conflicts: false };
 
   const emit = () => {
@@ -149,10 +158,35 @@ export function subscribeDashboard(onData, onError) {
       state.conflicts = snap.docs.map(item => ({ id: item.id, ...item.data() }));
       loaded.conflicts = true;
       emit();
-    }, onError)
+    }, onError),
+    onSnapshot(query(collection(db, "accessLogs"), orderBy("signedInAt", "desc"), limit(50)), snap => {
+      state.accessLogs = snap.docs.map(item => ({ id: item.id, ...item.data() }));
+      state.accessLogsStatus = "ready";
+      emit();
+    }, error => {
+      // Em vez de deixar "Carregando..." indefinidamente, exibimos um estado
+      // de erro específico para facilitar o diagnóstico de Rules/cache/upload.
+      console.error("Falha ao carregar accessLogs:", error);
+      state.accessLogs = [];
+      state.accessLogsStatus = "error";
+      emit();
+      if (typeof onError === "function") onError(error);
+    })
   ];
 
   return () => unsubscribers.forEach(unsubscribe => unsubscribe());
+}
+
+export async function registerAccessLogin({ user, displayName }) {
+  if (!user) return false;
+  const accessRef = doc(collection(db, "accessLogs"));
+  await setDoc(accessRef, {
+    accessType: "login",
+    userUid: user.uid,
+    userName: String(displayName || "Usuário").trim().slice(0, 80),
+    signedInAt: serverTimestamp()
+  });
+  return true;
 }
 
 export async function registerVisit(user) {

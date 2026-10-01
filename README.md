@@ -325,3 +325,8 @@ No painel, a área **Memória Oficial** passa a mostrar também **Histórico de 
 ### Regra necessária no Firestore
 
 Publique o arquivo `firestore.rules` desta versão antes de testar o recurso. A coleção `accessLogs` só aceita criação quando o `userUid` gravado corresponde ao usuário autenticado.
+
+
+### Diagnóstico do Histórico de acesso — v2.1.1
+
+O bloco de acessos agora é independente do carregamento do restante do painel. Se a leitura da coleção `accessLogs` falhar, a interface deixa de ficar presa em “Carregando…” e mostra um aviso específico. As causas mais comuns são: regras antigas ainda publicadas no Firestore, arquivos JavaScript da versão anterior no GitHub Pages ou cache do navegador. Após atualizar os arquivos e as Rules, faça logout/login novamente para gerar um novo registro de acesso.

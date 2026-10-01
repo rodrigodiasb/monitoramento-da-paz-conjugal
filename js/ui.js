@@ -38,7 +38,7 @@ export function renderUser(profile, isAdmin) {
   $("openSettingsButton").classList.toggle("hidden", !isAdmin);
 }
 
-export function renderDashboard({ stats, settings, profile }) {
+export function renderDashboard({ stats, settings, profile, accessLogs = [], accessLogsStatus = "ready" }) {
   const tier = getTier(stats.currentDays);
   const milestone = getMilestoneProgress(stats.currentDays);
   const hero = $("heroCard");
@@ -73,6 +73,7 @@ export function renderDashboard({ stats, settings, profile }) {
   renderStats(stats);
   renderAchievements(stats);
   renderHistory(stats, settings);
+  renderAccessHistory(accessLogs, accessLogsStatus);
   renderNotifications(stats, settings, profile);
 }
 
@@ -203,6 +204,61 @@ function renderHistory(stats) {
           ${conflict.status === "active" && !proposal ? `<button class="text-button" type="button" data-conflict-action="edit" data-id="${conflict.id}">Editar ocorrência</button>` : ""}
         </div>
         <div class="audit-list hidden" data-audit-for="${conflict.id}"></div>
+      </article>
+    `;
+  }).join("");
+}
+
+function renderAccessHistory(accessLogs, status = "ready") {
+  const list = $("accessHistoryList");
+  const summary = $("accessHistorySummary");
+  if (!list || !summary) return;
+
+  const logs = Array.isArray(accessLogs) ? accessLogs : [];
+
+  if (status === "loading") {
+    summary.textContent = "Carregando os últimos logins…";
+    list.innerHTML = `<div class="access-empty"><span aria-hidden="true">⏳</span><div><strong>Consultando o histórico.</strong><p>Isso normalmente leva apenas alguns instantes.</p></div></div>`;
+    return;
+  }
+
+  if (status === "error") {
+    summary.textContent = "Não foi possível consultar os últimos logins.";
+    list.innerHTML = `<div class="access-empty access-error"><span aria-hidden="true">⚠️</span><div><strong>Falha ao acessar o histórico.</strong><p>Confira se as regras da coleção accessLogs foram publicadas e atualize a página com Ctrl + F5.</p></div></div>`;
+    return;
+  }
+
+  summary.textContent = logs.length
+    ? `Exibindo os ${logs.length} logins mais recentes.`
+    : "Nenhum login registrado ainda.";
+
+  if (!logs.length) {
+    list.innerHTML = `
+      <div class="access-empty">
+        <span aria-hidden="true">🔐</span>
+        <div><strong>Ainda não há histórico de acesso.</strong><p>Os próximos logins realizados com sucesso passarão a aparecer aqui.</p></div>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = logs.map((entry, index) => {
+    const name = entry.userName || "Usuário";
+    const initial = name.trim().slice(0, 1).toUpperCase() || "•";
+    const absolute = formatDateTime(entry.signedInAt);
+    const relative = relativeTime(entry.signedInAt);
+    return `
+      <article class="access-item">
+        <div class="access-avatar" aria-hidden="true">${escapeHtml(initial)}</div>
+        <div class="access-copy">
+          <strong>${escapeHtml(name)}</strong>
+          <span>Entrou no aplicativo</span>
+        </div>
+        <div class="access-time">
+          <strong>${escapeHtml(absolute)}</strong>
+          <small>${escapeHtml(relative)}</small>
+        </div>
+        <span class="access-sequence" aria-label="Posição no histórico">#${index + 1}</span>
       </article>
     `;
   }).join("");

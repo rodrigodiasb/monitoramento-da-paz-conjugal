@@ -4,7 +4,7 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import { auth } from "./firebase.js";
-import { getAuthorizedProfile, isAuthorizedUser, loadPublicAliases } from "./data.js";
+import { getAuthorizedProfile, isAuthorizedUser, loadPublicAliases, registerAccessLogin } from "./data.js";
 import { normalizeAlias } from "./utils.js";
 
 let aliasCache = null;
@@ -27,6 +27,14 @@ export async function loginWithAlias(alias, password) {
     throw new Error("Esta conta existe no Firebase, mas não está autorizada para este casal.");
   }
   const profile = await getAuthorizedProfile(credential.user);
+  try {
+    await registerAccessLogin({
+      user: credential.user,
+      displayName: profile?.displayName || account.displayName || alias
+    });
+  } catch (error) {
+    console.warn("Login realizado, mas não foi possível registrar o histórico de acesso.", error);
+  }
   return { user: credential.user, profile, aliases };
 }
 
