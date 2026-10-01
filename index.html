@@ -169,6 +169,11 @@
           <span><strong>Histórico Diplomático</strong><small>Memória oficial das conversas sérias.</small></span>
           <span class="action-arrow">→</span>
         </button>
+        <button id="openAccessHistoryButton" class="action-card access-action" type="button">
+          <span class="action-icon">🔐</span>
+          <span><strong>Histórico de acesso</strong><small>Veja quando cada um entrou no aplicativo.</small></span>
+          <span class="action-arrow">→</span>
+        </button>
       </section>
 
       <section id="estatisticas" class="content-section">
@@ -229,6 +234,21 @@
           <p class="section-description">Nenhuma ocorrência some: tudo fica registrado com autoria, horários e reconciliação.</p>
         </div>
         <div id="historyList" class="history-list"></div>
+
+        <div id="acessos" class="access-history-block">
+          <div class="subsection-heading">
+            <div>
+              <p class="eyebrow">CONTROLE DE ACESSO</p>
+              <h3>Histórico de acesso</h3>
+            </div>
+            <p id="accessHistorySummary" class="section-description">Carregando os últimos logins…</p>
+          </div>
+          <div class="access-note">
+            <span aria-hidden="true">🔒</span>
+            <p>Este histórico registra somente logins concluídos com sucesso. Atualizar a página ou navegar pelo aplicativo não gera um novo registro.</p>
+          </div>
+          <div id="accessHistoryList" class="access-list"></div>
+        </div>
       </section>
     </main>
 

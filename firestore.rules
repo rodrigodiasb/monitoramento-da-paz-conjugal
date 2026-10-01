@@ -52,6 +52,19 @@ service cloud.firestore {
       allow delete: if isPrimaryAdmin();
     }
 
+    // Histórico de acesso: os dois podem consultar; cada usuário só pode registrar o próprio login.
+    // É uma trilha imutável: registros antigos não podem ser editados nem apagados pelo aplicativo.
+    match /accessLogs/{logId} {
+      allow read: if isAuthorized();
+      allow create: if isAuthorized()
+        && request.resource.data.userUid == request.auth.uid
+        && request.resource.data.userName is string
+        && request.resource.data.accessType == "login"
+        && request.resource.data.keys().hasAll(["accessType", "userUid", "userName", "signedInAt"])
+        && request.resource.data.keys().hasOnly(["accessType", "userUid", "userName", "signedInAt"]);
+      allow update, delete: if false;
+    }
+
     // Ocorrências podem ser registradas e movimentadas pelos dois usuários.
     match /conflicts/{conflictId} {
       allow read, create, update: if isAuthorized();

@@ -314,3 +314,14 @@ O projeto usa módulos ES do Firebase JavaScript SDK 12.19.0 diretamente do CDN 
 ## Limitação conhecida antes da configuração final
 
 O segundo usuário ainda não está preenchido neste pacote porque nenhum e-mail/UID da segunda conta foi fornecido. Isso não exige alteração de código: basta criar a conta no Firebase Authentication e cadastrá-la pela tela **Configurações**, após o primeiro login de Rodrigo.
+
+
+## Histórico de acesso
+
+A versão 2.1 adiciona uma trilha de login para o casal. Cada autenticação concluída com sucesso gera um documento na coleção `accessLogs` com o UID, nome exibido e horário do acesso. Atualizações da página e restaurações automáticas da sessão não são registradas como novos logins.
+
+No painel, a área **Memória Oficial** passa a mostrar também **Histórico de acesso**, com os 50 logins mais recentes em ordem decrescente de data/hora. Os dois usuários autorizados podem consultar o histórico. Pelo aplicativo, os registros são imutáveis: não podem ser editados ou excluídos.
+
+### Regra necessária no Firestore
+
+Publique o arquivo `firestore.rules` desta versão antes de testar o recurso. A coleção `accessLogs` só aceita criação quando o `userUid` gravado corresponde ao usuário autenticado.
